@@ -13,12 +13,15 @@ from keras.utils.visualize_util import plot
 from keras.optimizers import SGD
 from keras.layers.normalization import BatchNormalization
 from keras.callbacks import EarlyStopping,LearningRateScheduler 
+from keras.wrappers.scikit_learn import KerasClassifier
+from keras.constraints import maxnorm
 
 from sklearn.preprocessing import RobustScaler
 from sklearn.metrics import roc_curve, auc
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import maxabs_scale
+from sklearn.model_selection import GridSearchCV
 
 import macros
 from macros import *
@@ -109,16 +112,17 @@ for x in range(1, number_of_loops+1):
 
 	
 	# Create model
-	model = Sequential()
+#	model = Sequential()
+#
+#
+#	# Add layers to the model
+#	create_model(model, input_scale)
+#
+#
+#	# Compile model
+#	model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-
-	# Add layers to the model
-	create_model(model, input_scale)
-
-
-	# Compile model
-	model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-
+	model = create_model(input_scale)
 
 	# Draw Model
 	plot(model,show_shapes=True, to_file='./saved_models/model_%02d.png' %x)

@@ -13,16 +13,19 @@ from keras.utils.visualize_util import plot
 from keras.optimizers import SGD
 from keras.layers.normalization import BatchNormalization
 from keras.callbacks import EarlyStopping,LearningRateScheduler
+from keras.wrappers.scikit_learn import KerasClassifier
+from keras.constraints import maxnorm
 
 from sklearn.preprocessing import RobustScaler
 from sklearn.metrics import roc_curve, auc
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
+from sklearn.preprocessing import maxabs_scale
+from sklearn.model_selection import GridSearchCV
 
 
-
-def create_model(input_model, input_scale):
-        #input_model = Sequential()
+def create_model(input_scale):
+        input_model = Sequential()
         input_model.add(Dense(100, input_dim=input_scale, init='uniform', activation='relu')) #Input layer
         input_model.add(Dense(100, init='uniform', activation='relu'))               #Hidden Layer 02
         input_model.add(Dense(100, init='uniform', activation='relu'))               #Hidden Layer 03
@@ -34,8 +37,43 @@ def create_model(input_model, input_scale):
 #        model.add(Dense(input_scale, init='uniform', activation='relu'))               #Hidden Layer 09
 #        model.add(Dense(input_scale, init='uniform', activation='relu'))               #Hidden Layer 10
         input_model.add(Dense(1, init='uniform', activation='sigmoid'))
-        return
+        # Compile model
+        input_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        return input_model
 
+
+def create_model_neurons(neurons=40):
+        input_model = Sequential()
+        input_model.add(Dense(neurons, input_dim=28, init='uniform', activation='relu')) #Input layer
+        input_model.add(Dense(neurons, init='uniform', activation='relu'))               #Hidden Layer 02
+        input_model.add(Dense(neurons, init='uniform', activation='relu'))               #Hidden Layer 03
+        input_model.add(Dense(1, init='uniform', activation='sigmoid'))
+	# Compile model
+	input_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        return input_model
+
+
+def create_model_activation(activation='tanh'):
+        input_model = Sequential()
+        input_model.add(Dense(100, input_dim=28, init='uniform', activation=activation)) #Input layer
+        input_model.add(Dense(100, init='uniform', activation=activation))               #Hidden Layer 02
+        input_model.add(Dense(100, init='uniform', activation=activation))               #Hidden Layer 03
+        input_model.add(Dense(1, init='uniform', activation='sigmoid'))
+        # Compile model
+        input_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        return input_model
+
+
+
+def create_model_opt(optimizer='adam'):
+        input_model = Sequential()
+        input_model.add(Dense(100, input_dim=28, init='uniform', activation='relu')) #Input layer
+        input_model.add(Dense(100, init='uniform', activation='relu'))               #Hidden Layer 02
+        input_model.add(Dense(100, init='uniform', activation='relu'))               #Hidden Layer 03
+        input_model.add(Dense(1, init='uniform', activation='sigmoid'))
+        # Compile model
+        input_model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+        return input_model
 
 def plot_accuracy(history_arg, x, show_toggle, save_toggle):
         # summarize history for accuracy
