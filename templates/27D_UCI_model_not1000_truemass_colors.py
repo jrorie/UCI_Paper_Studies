@@ -49,6 +49,7 @@ file = open('./logs/logFile_training.txt', 'w')
 data_directory = '/storage1/users/jtr6/UCI_paper_data_sample/'
 training_data_sample = 'not1000_train.npy'
 test_data_sample = 'not1000_test.npy'
+scaler = 'maxabs'							#Options: 'none', 'maxabs' 
 feature = 27
 number_of_loops = 2							#Total number of loops, is incremented later for functions who's index start at 0
 number_of_epochs = 1							#Just what it says, number of epochs never re-indexed
@@ -65,6 +66,7 @@ file.write('--------------------------------\n')
 file.write('Directory: %s\n'        % data_directory)
 file.write('Training data: %s\n'    % training_data_sample)
 file.write('Test data: %s\n'        % test_data_sample)
+file.write('Normalizer : %s\n'	    % scaler)
 file.write('Seed value: %d]n'       % seed)
 file.write('Feature number: %d\n'   % feature)
 file.write('Number of loops: %d\n'  % number_of_loops)
@@ -96,9 +98,7 @@ Y_test = testset[:,0]
 
 
 # Scale
-X_train = maxabs_scale(X_train_prescale, axis=0, copy=True)
-X_test = maxabs_scale(X_test_prescale, axis=0, copy=True)
-
+X_train, X_test = scale_x(X_train_prescale, X_test_prescale, scaler)
 
 # Pull the input layer dimension
 input_scale = X_train.shape[1]

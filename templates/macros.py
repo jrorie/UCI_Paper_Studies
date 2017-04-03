@@ -24,6 +24,21 @@ from sklearn.preprocessing import maxabs_scale
 from sklearn.model_selection import GridSearchCV
 
 
+def scale_x(X_train_prescale, X_test_prescale, scaler):
+	if scaler=='none':
+		X_train = X_train_prescale
+		X_test  = X_test_prescale
+		print 'No prescale\n'
+	elif scaler=='maxabs':
+		X_train = maxabs_scale(X_train_prescale, axis=0, copy=True)
+		X_test  = maxabs_scale(X_test_prescale, axis=0, copy=True)
+		print 'MaxAbs\n'	
+	elif scaler=='robust_scale':
+		X_train = robust_scale(X_train_prescale)
+		X_test  = robust_scale(X_test_prescale)
+		print 'Robust Scale\n'
+	return X_train, X_test
+
 def create_model(input_scale):
         input_model = Sequential()
         input_model.add(Dense(100, input_dim=input_scale, init='uniform', activation='relu')) #Input layer
@@ -42,9 +57,9 @@ def create_model(input_scale):
         return input_model
 
 
-def create_model_neurons(neurons=40):
+def create_model_neurons(input_scale=28, neurons=40):
         input_model = Sequential()
-        input_model.add(Dense(neurons, input_dim=28, init='uniform', activation='relu')) #Input layer
+        input_model.add(Dense(neurons, input_dim=input_scale, init='uniform', activation='relu')) #Input layer
         input_model.add(Dense(neurons, init='uniform', activation='relu'))               #Hidden Layer 02
         input_model.add(Dense(neurons, init='uniform', activation='relu'))               #Hidden Layer 03
         input_model.add(Dense(1, init='uniform', activation='sigmoid'))
@@ -52,10 +67,20 @@ def create_model_neurons(neurons=40):
 	input_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         return input_model
 
+#def create_model_neurons(input_dim=4, neurons=40):
+#        input_model = Sequential()
+#        input_model.add(Dense(neurons, input_dim=input_scale, init='uniform', activation='relu')) #Input layer
+#        input_model.add(Dense(neurons, init='uniform', activation='relu'))               #Hidden Layer 02
+#        input_model.add(Dense(neurons, init='uniform', activation='relu'))               #Hidden Layer 03
+#        input_model.add(Dense(1, init='uniform', activation='sigmoid'))
+#        # Compile model
+#        input_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+#        return input_model
 
-def create_model_activation(activation='tanh'):
+
+def create_model_activation(input_scale=28, activation='tanh'):
         input_model = Sequential()
-        input_model.add(Dense(100, input_dim=28, init='uniform', activation=activation)) #Input layer
+        input_model.add(Dense(100, input_dim=input_scale, init='uniform', activation=activation)) #Input layer
         input_model.add(Dense(100, init='uniform', activation=activation))               #Hidden Layer 02
         input_model.add(Dense(100, init='uniform', activation=activation))               #Hidden Layer 03
         input_model.add(Dense(1, init='uniform', activation='sigmoid'))
@@ -65,9 +90,9 @@ def create_model_activation(activation='tanh'):
 
 
 
-def create_model_opt(optimizer='adam'):
+def create_model_opt(input_scale=28, optimizer='adam'):
         input_model = Sequential()
-        input_model.add(Dense(100, input_dim=28, init='uniform', activation='relu')) #Input layer
+        input_model.add(Dense(100, input_dim=input_scale, init='uniform', activation='relu')) #Input layer
         input_model.add(Dense(100, init='uniform', activation='relu'))               #Hidden Layer 02
         input_model.add(Dense(100, init='uniform', activation='relu'))               #Hidden Layer 03
         input_model.add(Dense(1, init='uniform', activation='sigmoid'))
@@ -76,7 +101,6 @@ def create_model_opt(optimizer='adam'):
         return input_model
 
 def plot_accuracy(history_arg, x, show_toggle, save_toggle):
-        # summarize history for accuracy
         plt.plot(history_arg.history['acc'])
         plt.title('model accuracy')
         plt.ylabel('accuracy')
@@ -90,9 +114,7 @@ def plot_accuracy(history_arg, x, show_toggle, save_toggle):
         return
 
 def plot_loss(history_arg, x, show_toggle, save_toggle):
-        # summarize history for loss
         plt.plot(history_arg.history['loss'])
-        #plt.plot(history_arg.history['val_loss'])
         plt.title('model loss')
         plt.ylabel('loss')
         plt.xlabel('epoch')

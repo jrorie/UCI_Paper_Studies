@@ -49,10 +49,11 @@ file = open('./logs/logFile_training.txt', 'w')
 data_directory = '/storage1/users/jtr6/UCI_paper_data_sample/'
 training_data_sample = 'not1000_train.npy'
 test_data_sample = 'not1000_test.npy'
+scaler = 'maxabs'
 feature = 27
 number_of_loops = 1							#Total number of loops, is incremented later for functions who's index start at 0
 number_of_epochs = 1							#Just what it says, number of epochs never re-indexed
-set_batch_size = 10000							#Select batch size
+set_batch_size = 100							#Select batch size
 
 # Fix random seed for reproducibility
 seed = 42
@@ -74,14 +75,6 @@ file.write('********************************\n')
 file.write('********************************\n')
 
 
-## Fix random seed for reproducibility
-#seed = 42
-#numpy.random.seed(seed)
-
-
-## Set the time 
-#now = time.strftime("%X")
-
 
 # Load UCI data
 dataset = numpy.load(data_directory + training_data_sample)                     #Load data from numpy array
@@ -96,8 +89,7 @@ Y_test = testset[:,0]
 
 
 # Scale
-X_train = maxabs_scale(X_train_prescale, axis=0, copy=True)
-X_test = maxabs_scale(X_test_prescale, axis=0, copy=True)
+X_train, X_test = scale_x(X_train_prescale, X_test_prescale, scaler)
 
 
 # Pull the input layer dimension
@@ -110,27 +102,17 @@ for x in range(1, number_of_loops+1):
 
 	loop_start_time = time.time()
 
-	
-#	# Create model
-#	model = Sequential()
-#
-#
-#	# Add layers to the model
-#	create_model(model, input_scale)
-#
-#
-#	# Compile model
-#	model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+	model = KerasClassifier(build_fn=create_model, nb_epoch=1, batch_size=10000, verbose=0) 
+#	model = KerasClassifier(build_fn=create_model_neurons, nb_epoch=1, batch_size=10000, verbose=0)
+#	model = KerasClassifier(build_fn=create_model_opt, nb_epoch=1, batch_size=10000, verbose=0)
+#	model = KerasClassifier(build_fn=create_model_activation, nb_epoch=1, batch_size=10000, verbose=0)
 
-	#model = KerasClassifier(build_fn=create_model_neurons, nb_epoch=1, batch_size=10000, verbose=0)
-	#model = KerasClassifier(build_fn=create_model_opt, nb_epoch=1, batch_size=10000, verbose=0)
-	model = KerasClassifier(build_fn=create_model_activation, nb_epoch=1, batch_size=10000, verbose=0)
 
-	## define the grid search parameters
-	#neurons = [10,30]
-	#param_grid = dict(neurons=neurons)
-	#grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
-        #grid_result = grid.fit(X_train, Y_train)
+#	## define the grid search parameters
+#	neurons = [10,30]
+#	param_grid = dict(neurons=neurons)
+#	grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
+#        grid_result = grid.fit(X_train, Y_train)
 
 	## define the grid search parameters
 	#optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
@@ -138,19 +120,19 @@ for x in range(1, number_of_loops+1):
 	#grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
 	#grid_result = grid.fit(X_train, Y_train)
 
-	# define the grid search parameters
-	activation = ['softmax', 'softplus', 'softsign', 'relu', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear']
-	param_grid = dict(activation=activation)
-	grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
-	grid_result = grid.fit(X_train, Y_train)
+#	# define the grid search parameters
+#	activation = ['softmax', 'softplus', 'softsign', 'relu', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear']
+#	param_grid = dict(activation=activation)
+#	grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
+#	grid_result = grid.fit(X_train, Y_train)
 
-	# summarize results
-	print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
-	means = grid_result.cv_results_['mean_test_score']
-	stds = grid_result.cv_results_['std_test_score']
-	params = grid_result.cv_results_['params']
-	for mean, stdev, param in zip(means, stds, params):
-   		 print("%f (%f) with: %r" % (mean, stdev, param))
+#	# summarize results
+#	print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
+#	means = grid_result.cv_results_['mean_test_score']
+#	stds = grid_result.cv_results_['std_test_score']
+#	params = grid_result.cv_results_['params']
+#	for mean, stdev, param in zip(means, stds, params):
+#   		 print("%f (%f) with: %r" % (mean, stdev, param))
 
 
 #	# Draw Model
