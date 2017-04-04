@@ -49,7 +49,7 @@ file = open('./logs/logFile_training.txt', 'w')
 data_directory = '/storage1/users/jtr6/UCI_paper_data_sample/'
 training_data_sample = 'not1000_train.npy'
 test_data_sample = 'not1000_test.npy'
-scaler = 'maxabs'							#Options: 'none', 'maxabs' 
+scaler = 'maxabs'							#Options: 'none', 'maxabs', 'robust_scale' 
 feature = 27
 number_of_loops = 2							#Total number of loops, is incremented later for functions who's index start at 0
 number_of_epochs = 1							#Just what it says, number of epochs never re-indexed
@@ -67,7 +67,7 @@ file.write('Directory: %s\n'        % data_directory)
 file.write('Training data: %s\n'    % training_data_sample)
 file.write('Test data: %s\n'        % test_data_sample)
 file.write('Normalizer : %s\n'	    % scaler)
-file.write('Seed value: %d]n'       % seed)
+file.write('Seed value: %d\n'       % seed)
 file.write('Feature number: %d\n'   % feature)
 file.write('Number of loops: %d\n'  % number_of_loops)
 file.write('Number of epochs: %d\n' % number_of_epochs)

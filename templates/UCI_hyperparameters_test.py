@@ -52,7 +52,7 @@ test_data_sample = 'not1000_test.npy'
 scaler = 'maxabs'
 feature = 27
 number_of_loops = 1							#Total number of loops, is incremented later for functions who's index start at 0
-number_of_epochs = 1							#Just what it says, number of epochs never re-indexed
+number_of_epochs = 10							#Just what it says, number of epochs never re-indexed
 set_batch_size = 100							#Select batch size
 
 # Fix random seed for reproducibility
@@ -102,17 +102,17 @@ for x in range(1, number_of_loops+1):
 
 	loop_start_time = time.time()
 
-	model = KerasClassifier(build_fn=create_model, nb_epoch=1, batch_size=10000, verbose=0) 
-#	model = KerasClassifier(build_fn=create_model_neurons, nb_epoch=1, batch_size=10000, verbose=0)
+#	model = KerasClassifier(build_fn=create_model, nb_epoch=1, batch_size=10000, verbose=0) 
+	model = KerasClassifier(build_fn=create_model_neurons, nb_epoch=1, batch_size=10000, verbose=0)
 #	model = KerasClassifier(build_fn=create_model_opt, nb_epoch=1, batch_size=10000, verbose=0)
 #	model = KerasClassifier(build_fn=create_model_activation, nb_epoch=1, batch_size=10000, verbose=0)
 
 
-#	## define the grid search parameters
-#	neurons = [10,30]
-#	param_grid = dict(neurons=neurons)
-#	grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
-#        grid_result = grid.fit(X_train, Y_train)
+	## define the grid search parameters
+	neurons = [1,5,10,50,100,500,1000,5000,10000]
+	param_grid = dict(neurons=neurons)
+	grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
+        grid_result = grid.fit(X_train, Y_train)
 
 	## define the grid search parameters
 	#optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
@@ -126,13 +126,14 @@ for x in range(1, number_of_loops+1):
 #	grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
 #	grid_result = grid.fit(X_train, Y_train)
 
-#	# summarize results
-#	print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
-#	means = grid_result.cv_results_['mean_test_score']
-#	stds = grid_result.cv_results_['std_test_score']
-#	params = grid_result.cv_results_['params']
-#	for mean, stdev, param in zip(means, stds, params):
-#   		 print("%f (%f) with: %r" % (mean, stdev, param))
+	# summarize results
+	print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
+	means = grid_result.cv_results_['mean_test_score']
+	stds = grid_result.cv_results_['std_test_score']
+	params = grid_result.cv_results_['params']
+	for mean, stdev, param in zip(means, stds, params):
+   		 print("%f (%f) with: %r" % (mean, stdev, param))
+		 file.write("%f (%f) with: %r" % (mean, stdev, param))
 
 
 #	# Draw Model
