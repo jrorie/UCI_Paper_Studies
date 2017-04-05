@@ -23,8 +23,14 @@ from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import maxabs_scale
 from sklearn.model_selection import GridSearchCV
 
+# Bring in and set global variables must be done before macros!
+import globals
+globals.init()
+
+# Bring in external macros
 import macros
 from macros import *
+
 
 # Create directory structure
 if not os.path.exists('./plots/'):
@@ -52,8 +58,8 @@ test_data_sample = 'not1000_test.npy'
 scaler = 'maxabs'
 feature = 27
 number_of_loops = 1							#Total number of loops, is incremented later for functions who's index start at 0
-number_of_epochs = 10							#Just what it says, number of epochs never re-indexed
-set_batch_size = 100							#Select batch size
+number_of_epochs = 1							#Just what it says, number of epochs never re-indexed
+set_batch_size = 10000							#Select batch size
 
 # Fix random seed for reproducibility
 seed = 42
@@ -92,8 +98,9 @@ Y_test = testset[:,0]
 X_train, X_test = scale_x(X_train_prescale, X_test_prescale, scaler)
 
 
-# Pull the input layer dimension
-input_scale = X_train.shape[1]
+## Pull the input layer dimension
+globals.init()
+globals.input_scale = X_train.shape[1]
 
 
 for x in range(1, number_of_loops+1):
@@ -109,7 +116,8 @@ for x in range(1, number_of_loops+1):
 
 
 	## define the grid search parameters
-	neurons = [1,5,10,50,100,500,1000,5000,10000]
+	#neurons = [1,5,10,50,100,500,1000,5000,10000]
+	neurons = [1,5,10]
 	param_grid = dict(neurons=neurons)
 	grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
         grid_result = grid.fit(X_train, Y_train)
@@ -209,5 +217,5 @@ overall_elapsed_time = overall_end_time-overall_start_time
 print "Done"
 print "Elapsed Time = %d seconds" % overall_elapsed_time
 file.write('Elapsed time for all %02d loops: %02d\n' %(x, overall_elapsed_time))
-file.write('X Feature Count: %d\n'                   % input_scale) 
+file.write('X Feature Count: %d\n'                   % globals.input_scale) 
 file.close()
