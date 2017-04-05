@@ -23,12 +23,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import maxabs_scale
 from sklearn.model_selection import GridSearchCV
 
-print "Before macro globals import"
-#import globals as globals
 import globals
-print "After macro globals import"
-
-#input_scale=8
 
 
 def scale_x(X_train_prescale, X_test_prescale, scaler):
@@ -46,9 +41,10 @@ def scale_x(X_train_prescale, X_test_prescale, scaler):
 		print 'Robust Scale\n'
 	return X_train, X_test
 
-def create_model(input_scale):
+#def create_model(input_scale):
+def create_model():
         input_model = Sequential()
-        input_model.add(Dense(100, input_dim=input_scale, init='uniform', activation='relu')) #Input layer
+        input_model.add(Dense(100, input_dim=globals.input_scale, init='uniform', activation='relu')) #Input layer
         input_model.add(Dense(100, init='uniform', activation='relu'))               #Hidden Layer 02
         input_model.add(Dense(100, init='uniform', activation='relu'))               #Hidden Layer 03
 #        model.add(Dense(input_scale, init='uniform', activation='relu'))               #Hidden Layer 04
@@ -64,10 +60,8 @@ def create_model(input_scale):
         return input_model
 
 
-#def create_model_neurons(input_dim = globals.input_scale, neurons = 40):
 def create_model_neurons(input_scale = globals.input_scale, neurons = 40): 
         input_model = Sequential()
-	print "globals.input_scale is %d" % globals.input_scale
         input_model.add(Dense(neurons, input_dim=globals.input_scale, init='uniform', activation='relu')) #Input layer
         input_model.add(Dense(neurons, init='uniform', activation='relu'))               #Hidden Layer 02
         input_model.add(Dense(neurons, init='uniform', activation='relu'))               #Hidden Layer 03
