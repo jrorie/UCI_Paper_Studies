@@ -1,0 +1,15 @@
+--------------------------------
+    Definitions of Constants    
+--------------------------------
+Directory: /storage1/users/jtr6/UCI_paper_data_sample/
+Training data: not1000_train.npy
+Test data: not1000_test.npy
+Normalizer : maxabs
+Seed value: 42
+Feature number: 27
+Number of loops: 2
+Number of epochs: 1
+Batch Size: 10000
+********************************
+********************************
+Starting loop 01

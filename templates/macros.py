@@ -8,6 +8,9 @@ import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 
 from keras.models import Sequential
+#from keras.initializers import RandomNomral
+#from keras import initializers
+#from keras.initializers import Zeros
 from keras.layers import Dense, Dropout
 from keras.utils.visualize_util import plot
 from keras.optimizers import SGD
@@ -52,6 +55,21 @@ def create_model():
         input_model.add(Dense(1, init='uniform', activation='sigmoid'))              		      #Output Layer
         # Compile model
         input_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        return input_model
+
+def create_model_UCI_27D_default():
+	#random_normal = RandomNormal(mean=0.0, stddev=0.1, seed=8675309)
+        input_model = Sequential()
+        #input_model.add(Dense(500, input_dim=globals.input_scale, init='uniform', activation='relu')) #Input layer
+	input_model.add(Dense(500, input_dim=globals.input_scale, init='uniform', activation='relu', weights=[numpy.random.normal(0,0.1,(globals.input_scale, 500)),numpy.random.normal(0,0.1,500)])) #Input layer
+        input_model.add(Dense(500, init='uniform', activation='relu', weights=[numpy.random.normal(0,0.1,(500, 500)),numpy.random.normal(0,0.1,500)]))                                #Hidden Layer 02
+        input_model.add(Dense(500, init='uniform', activation='relu', weights=[numpy.random.normal(0,0.1,(500, 500)),numpy.random.normal(0,0.1,500)]))                                #Hidden Layer 03
+	input_model.add(Dense(500, init='uniform', activation='relu', weights=[numpy.random.normal(0,0.1,(500, 500)),numpy.random.normal(0,0.1,500)]))                                 #Hidden Layer 04
+	input_model.add(Dense(500, init='uniform', activation='relu', weights=[numpy.random.normal(0,0.1,(500, 500)),numpy.random.normal(0,0.1,500)]))                                 #Hidden Layer 05
+        input_model.add(Dense(1, init='uniform', activation='sigmoid',  weights=[numpy.random.normal(0,0.1,(500, 1)),numpy.random.normal(0,0.1,1)]))                                #Output Layer
+        # Compile model
+        sgd = SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
+        input_model.compile(loss='mean_squared_error', optimizer=sgd, metrics=['accuracy'])
         return input_model
 
 def create_model_UCI_1D_default():

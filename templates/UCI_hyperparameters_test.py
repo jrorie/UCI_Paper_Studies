@@ -49,7 +49,7 @@ if not os.path.exists('./roc_info/'):
 overall_start_time = time.time()
 
 #Open the log file
-file = open('./logs/logFile_training.txt', 'w')
+file = open('./logs/logFile_gridsearch.txt', 'w')
 
 # Define Constants
 data_directory = '/storage1/users/jtr6/UCI_paper_data_sample/'
@@ -72,7 +72,7 @@ file.write('--------------------------------\n')
 file.write('Directory: %s\n'        % data_directory)
 file.write('Training data: %s\n'    % training_data_sample)
 file.write('Test data: %s\n'        % test_data_sample)
-file.write('Seed value: %d]n'       % seed)
+file.write('Seed value: %d\n'       % seed)
 file.write('Feature number: %d\n'   % feature)
 file.write('Number of loops: %d\n'  % number_of_loops)
 file.write('Number of epochs: %d\n' % number_of_epochs)
@@ -99,123 +99,57 @@ X_train, X_test = scale_x(X_train_prescale, X_test_prescale, scaler)
 
 
 ## Pull the input layer dimension
-globals.init()
 globals.input_scale = X_train.shape[1]
 
 
-for x in range(1, number_of_loops+1):
+loop_start_time = time.time()
 
-	file.write('Starting loop %02d\n' %x)
-
-	loop_start_time = time.time()
-
-#	model = KerasClassifier(build_fn=create_model, nb_epoch=1, batch_size=10000, verbose=0) 
-	model = KerasClassifier(build_fn=create_model_neurons, nb_epoch=1, batch_size=10000, verbose=0)
-#	model = KerasClassifier(build_fn=create_model_opt, nb_epoch=1, batch_size=10000, verbose=0)
-#	model = KerasClassifier(build_fn=create_model_activation, nb_epoch=1, batch_size=10000, verbose=0)
+model = KerasClassifier(build_fn=create_model, nb_epoch=1, batch_size=10000, verbose=0) 
+#model = KerasClassifier(build_fn=create_model_neurons, nb_epoch=1, batch_size=10000, verbose=0)
+#model = KerasClassifier(build_fn=create_model_opt, nb_epoch=1, batch_size=10000, verbose=0)
+#model = KerasClassifier(build_fn=create_model_activation, nb_epoch=1, batch_size=10000, verbose=0)
 
 
-	## define the grid search parameters
-	#neurons = [1,5,10,50,100,500,1000,5000,10000]
-	neurons = [1,5,10]
-	param_grid = dict(neurons=neurons)
-	grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
-        grid_result = grid.fit(X_train, Y_train)
+# define the grid search parameters
+batch_size = [1, 100, 10000, 1000000]
+nb_epoch = [1,5]
+param_grid = dict(batch_size=batch_size, nb_epoch=nb_epoch)
+grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
+grid_result = grid.fit(X_train, Y_train)
 
-	## define the grid search parameters
-	#optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
-	#param_grid = dict(optimizer=optimizer)
-	#grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
-	#grid_result = grid.fit(X_train, Y_train)
+### define the grid search parameters
+##neurons = [1,5,10,50,100,500,1000,5000,10000]
+#neurons = [1,5,10]
+#param_grid = dict(neurons=neurons)
+#grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
+#grid_result = grid.fit(X_train, Y_train)
 
-#	# define the grid search parameters
-#	activation = ['softmax', 'softplus', 'softsign', 'relu', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear']
-#	param_grid = dict(activation=activation)
-#	grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
-#	grid_result = grid.fit(X_train, Y_train)
+## define the grid search parameters
+#optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
+#param_grid = dict(optimizer=optimizer)
+#grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
+#grid_result = grid.fit(X_train, Y_train)
 
-	# summarize results
-	print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
-	means = grid_result.cv_results_['mean_test_score']
-	stds = grid_result.cv_results_['std_test_score']
-	params = grid_result.cv_results_['params']
-	for mean, stdev, param in zip(means, stds, params):
-   		 print("%f (%f) with: %r" % (mean, stdev, param))
-		 file.write("%f (%f) with: %r" % (mean, stdev, param))
+## define the grid search parameters
+#activation = ['softmax', 'softplus', 'softsign', 'relu', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear']
+#param_grid = dict(activation=activation)
+#grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
+#grid_result = grid.fit(X_train, Y_train)
 
-
-#	# Draw Model
-#	plot(model,show_shapes=True, to_file='./saved_models/model_%02d.png' %x)
-#	
-#
-#	#Announce start of loop
-#	print "Starting loop %02d" % x	
-#
-#	# Fit the model and save the history
-#	history = model.fit(X_train, Y_train, nb_epoch=number_of_epochs, batch_size=set_batch_size)
-#
-#
-#	# List all data in history
-#	print(history.history.keys())
-#
-#
-#	# Plot the accuracy	
-#	plot_accuracy(history, x, show_toggle=False, save_toggle=False)	
-#
-#	# Plot the loss
-#	plot_loss(history, x, show_toggle=False, save_toggle=False)
-#
-#
-#	# Evaluate the model
-#	scores = model.evaluate(X_train, Y_train)
-#	print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
-#	print "\n"
-#
-#	# Save the model
-#	model.save('./saved_models/saved_27D_model_not1000_truemass_%02d.h5' % x)
-#
-#
-#	# Make predictions
-#	model_predictions = model.predict(X_test)
-#	model_class_predictions = model.predict_classes(X_test)
-#
-#
-#	# Save predictions
-#	outfile_predict = open('./predictions/model_predictions_not1000.txt', 'w')
-#	outfile_class_predict = open('./predictions/model_class_predictions_not1000.txt', 'w')
-#	numpy.savetxt(outfile_predict, model_predictions)
-#	numpy.savetxt(outfile_class_predict, model_class_predictions)
-#
-#
-#        # Plot predictions
-#        plot_predictions(feature, X_test, model_class_predictions, x, show_toggle=False, save_toggle=True)
-#
-#
-#        # Plot ROC curve
-#        plot_ROC(Y_test, model_predictions, x, show_toggle=False, save_toggle=True)	
-#
-#	# Print classification report
-#        oldStdout = sys.stdout
-#        #file = open('logFile_training_%02d.txt' % x, 'w')
-#        sys.stdout = file
-#	print(classification_report(Y_test, model_class_predictions))
-#	sys.stdout = oldStdout
-#
-#	# Reset Model
-#	model.reset_states() 
-#	print "Model Reset\n"
-#
-#	# Log the loop
-#	loop_end_time = time.time()
-#	loop_elapsed_time = loop_end_time-loop_start_time
-#	file.write('Elapsed time for loop %02d: %02d\n\n' %(x, loop_elapsed_time))
+# summarize results
+print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
+file.write("Best: %f using %s\n" % (grid_result.best_score_, grid_result.best_params_))
+means = grid_result.cv_results_['mean_test_score']
+stds = grid_result.cv_results_['std_test_score']
+params = grid_result.cv_results_['params']
+for mean, stdev, param in zip(means, stds, params):
+   	print("%f (%f) with: %r" % (mean, stdev, param))
+	file.write("%f (%f) with: %r\n" % (mean, stdev, param))
 
 
 overall_end_time = time.time()
 overall_elapsed_time = overall_end_time-overall_start_time
-
 print "Done"
-print "Elapsed Time = %d seconds" % overall_elapsed_time
-file.write('Elapsed time for all %02d loops: %02d\n' %(x, overall_elapsed_time))
-file.write('X Feature Count: %d\n'                   % globals.input_scale) 
+file.write('Elapsed Time = %d seconds' % overall_elapsed_time)
+file.write('X Feature Count: %d\n'     % globals.input_scale) 
 file.close()

@@ -8,6 +8,8 @@ import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 
 from keras.models import Sequential
+#from keras import initializers
+#from keras.initializers import Zeros 
 from keras.layers import Dense, Dropout
 from keras.utils.visualize_util import plot
 from keras.optimizers import SGD
@@ -108,7 +110,8 @@ for x in range(1, number_of_loops+1):
 	loop_start_time = time.time()
 
 	#Create the model: all layer addition, compilation, etc	
-	model = create_model()
+	#model = create_model()
+	model = create_model_UCI_27D_default()
 
 	# Draw Model
 	plot(model,show_shapes=True, to_file='./saved_models/model_%02d.png' %x)
