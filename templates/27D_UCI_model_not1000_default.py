@@ -58,7 +58,7 @@ training_data_sample = 'not1000_train.npy'
 test_data_sample = 'not1000_test.npy'
 scaler = 'maxabs'							#Options: 'none', 'maxabs', 'robust_scale' 
 feature = 27
-number_of_loops = 2							#Total number of loops, is incremented later for functions who's index start at 0
+number_of_loops = 1							#Total number of loops, is incremented later for functions who's index start at 0
 number_of_epochs = 1							#Just what it says, number of epochs never re-indexed
 set_batch_size = 10000							#Select batch size
 
