@@ -52,7 +52,7 @@ overall_start_time = time.time()
 file = open('./logs/logFile_training.txt', 'w')
 
 # Define Constants
-data_directory = '/storage1/users/jtr6/UCI_paper_data_sample/'
+data_directory = '/home/ubuntu/data/'
 training_data_sample = 'not1000_train.npy'
 test_data_sample = 'not1000_test.npy'
 scaler = 'maxabs'							#Options: 'none', 'maxabs', 'robust_scale' 
@@ -81,12 +81,13 @@ file.write('Batch Size: %d\n'       % set_batch_size)
 file.write('********************************\n')
 file.write('********************************\n')
 
-
+print "loading data"
 
 # Load UCI data
 dataset = numpy.load(data_directory + training_data_sample)                     #Load data from numpy array
 testset = numpy.load(data_directory + test_data_sample)                      	#Load data from numpy array
 
+print "splitting data"
 
 # Split into input (X) and output (Y) variables
 X_train_prescale = dataset[:,[feature,28]]
@@ -94,6 +95,7 @@ Y_train = dataset[:,0]
 X_test_prescale = testset[:,[feature,28]]
 Y_test = testset[:,0]
 
+print "Starting scaling"
 
 # Scale
 X_train, X_test = scale_x(X_train_prescale, X_test_prescale, scaler)
@@ -109,19 +111,26 @@ for x in range(1, number_of_loops+1):
 
 	file.write('Starting loop %02d\n' %x)
 
+	print "No really, just before time.time()"
 	loop_start_time = time.time()
+	print "No really, just after time.time()"
+
+	print "loop start time"
 
 	#Create the model: all layer addition, compilation, etc	
 	model = create_model()
 
+	print "loop before draw model"
+
 	# Draw Model
-	plot(model,show_shapes=True, to_file='./saved_models/model_%02d.png' %x)
+	#plot(model,show_shapes=True, to_file='./saved_models/model_%02d.png' %x)
 	
 
 	#Announce start of loop
 	print "Starting loop %02d" % x	
 
 	# Fit the model and save the history
+	#history = model.fit(X_train, Y_train, nb_epoch=number_of_epochs, batch_size=set_batch_size)
 	#history = model.train_on_batch(X_train, Y_train, nb_epoch=number_of_epochs, batch_size=set_batch_size)
 	(loss, TOB_accuracy) = model.train_on_batch(X_train, Y_train)
 
@@ -141,14 +150,18 @@ for x in range(1, number_of_loops+1):
 	#print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 	#print "\n"
 
+	print "before save"
+
 	# Save the model
 	model.save('./saved_models/saved_1D_model_not1000_truemass_%02d.h5' % x)
 
+	print "before predictions"
 
 	# Make predictions
 	model_predictions = model.predict(X_test)
 	model_class_predictions = model.predict_classes(X_test)
 
+	print "before save predictions"
 
 	# Save predictions
 	outfile_predict = open('./predictions/model_predictions_not1000_%02d.txt' % x, 'w')
@@ -157,19 +170,19 @@ for x in range(1, number_of_loops+1):
 	numpy.savetxt(outfile_class_predict, model_class_predictions)
 
 
-        # Plot predictions
-        plot_predictions_1D(feature, X_test_prescale, model_class_predictions, x, show_toggle=False, save_toggle=True)
+        ## Plot predictions
+        #plot_predictions_1D(feature, X_test_prescale, model_class_predictions, x, show_toggle=False, save_toggle=True)
 
 
-        # Plot ROC curve
-        plot_ROC(Y_test, model_predictions, x, show_toggle=False, save_toggle=True)	
+        ## Plot ROC curve
+        #plot_ROC(Y_test, model_predictions, x, show_toggle=False, save_toggle=True)	
 
 	# Print classification report
-        oldStdout = sys.stdout
-        #file = open('logFile_training_%02d.txt' % x, 'w')
-        sys.stdout = file
-	print(classification_report(Y_test, model_class_predictions))
-	sys.stdout = oldStdout
+        #oldStdout = sys.stdout
+        ##file = open('logFile_training_%02d.txt' % x, 'w')
+        #sys.stdout = file
+	#print(classification_report(Y_test, model_class_predictions))
+	#sys.stdout = oldStdout
 	
 	print "Accuracy = %d" % TOB_accuracy
 
