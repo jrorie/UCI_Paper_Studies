@@ -8,7 +8,7 @@ import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 import pydot
 import graphviz
-
+import tensorflow as tf 
 
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
@@ -19,6 +19,8 @@ from keras.layers.normalization import BatchNormalization
 from keras.callbacks import EarlyStopping,LearningRateScheduler 
 from keras.wrappers.scikit_learn import KerasClassifier
 from keras.constraints import maxnorm
+from keras.utils import multi_gpu_model
+
 
 from sklearn.preprocessing import RobustScaler
 from sklearn.metrics import roc_curve, auc
@@ -86,6 +88,7 @@ file.write('Batch Size: %d\n'       % set_batch_size)
 file.write('********************************\n')
 file.write('********************************\n')
 
+sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 
 
 # Load UCI data
@@ -131,7 +134,10 @@ for x in range(1, number_of_loops+1):
 	#history = model.train_on_batch(X_train, Y_train, nb_epoch=number_of_epochs, batch_size=set_batch_size)
 	#(loss, TOB_accuracy) = model.train_on_batch(X_train, Y_train)
 	print "Fitting and making history"
-	history = model.fit(X_train, Y_train, nb_epoch=number_of_epochs, batch_size=set_batch_size)
+	#history = model.fit(X_train, Y_train, nb_epoch=number_of_epochs, batch_size=set_batch_size)
+	parallel_model = multi_gpu_model(model, gpus=4)
+	parallel_model.compile(loss='mean_squared_error',optimizer='rmsprop')
+	history = parallel_model.fit(X_train, Y_train, epochs=number_of_epochs, batch_size=set_batch_size)
 
 	## List all data in history
 	#print(history.history.keys())
