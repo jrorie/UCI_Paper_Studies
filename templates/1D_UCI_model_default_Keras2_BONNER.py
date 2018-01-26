@@ -144,43 +144,43 @@ for x in range(1, number_of_loops+1):
 	#plot_loss(history, x, show_toggle=False, save_toggle=False)
 
 
-	## Evaluate the model
-	print "Evaluating and scoring"
-	scores = model.evaluate(X_train, Y_train)
-	print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
-	print "\n"
+#	## Evaluate the model
+#	print "Evaluating and scoring"
+#	scores = model.evaluate(X_train, Y_train)
+#	print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+#	print "\n"
 
-	# Save the model
-	model.save('./saved_models/saved_1D_model_not1000_truemass_%02d.h5' % x)
-
-
-	# Make predictions
-	model_predictions = model.predict(X_test)
-	model_class_predictions = model.predict_classes(X_test)
+#	# Save the model
+#	model.save('./saved_models/saved_1D_model_not1000_truemass_%02d.h5' % x)
 
 
-	# Save predictions
-	outfile_predict = open('./predictions/model_predictions_not1000_%02d.txt' % x, 'w')
-	outfile_class_predict = open('./predictions/model_class_predictions_not1000_%02d.txt' %x, 'w')
-	numpy.savetxt(outfile_predict, model_predictions)
-	numpy.savetxt(outfile_class_predict, model_class_predictions)
+#	# Make predictions
+#	model_predictions = model.predict(X_test)
+#	model_class_predictions = model.predict_classes(X_test)
 
 
-        # Plot predictions
-	print "Plotting predictions"
-        plot_predictions_1D(feature, X_test_prescale, model_class_predictions, x, show_toggle=False, save_toggle=True)
+#	# Save predictions
+#	outfile_predict = open('./predictions/model_predictions_not1000_%02d.txt' % x, 'w')
+#	outfile_class_predict = open('./predictions/model_class_predictions_not1000_%02d.txt' %x, 'w')
+#	numpy.savetxt(outfile_predict, model_predictions)
+#	numpy.savetxt(outfile_class_predict, model_class_predictions)
 
 
-        # Plot ROC curve
-	print "Plotting ROC"
-        plot_ROC(Y_test, model_predictions, x, show_toggle=False, save_toggle=True)	
+#       # Plot predictions
+#	print "Plotting predictions"
+#       plot_predictions_1D(feature, X_test_prescale, model_class_predictions, x, show_toggle=False, save_toggle=True)
 
-	# Print classification report
-        oldStdout = sys.stdout
-        #file = open('logFile_training_%02d.txt' % x, 'w')
-        sys.stdout = file
-	print(classification_report(Y_test, model_class_predictions))
-	sys.stdout = oldStdout
+
+#        # Plot ROC curve
+#	print "Plotting ROC"
+#        plot_ROC(Y_test, model_predictions, x, show_toggle=False, save_toggle=True)	
+
+#	# Print classification report
+#        oldStdout = sys.stdout
+#        #file = open('logFile_training_%02d.txt' % x, 'w')
+#        sys.stdout = file
+#	print(classification_report(Y_test, model_class_predictions))
+#	sys.stdout = oldStdout
 	
 	#print "Accuracy = %d" % TOB_accuracy
 
