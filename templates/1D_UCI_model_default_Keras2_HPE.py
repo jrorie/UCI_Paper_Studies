@@ -56,7 +56,8 @@ overall_start_time = time.time()
 file = open('./logs/logFile_training.txt', 'w')
 
 # Define Constants
-data_directory = '/storage1/users/jtr6/UCI_paper_data_sample/'
+data_directory = '/home/rice/jrorie/data/'
+#data_directory = '/storage1/users/jtr6/UCI_paper_data_sample/'
 training_data_sample = 'not1000_train.npy'
 test_data_sample = 'not1000_test.npy'
 scaler = 'maxabs'							#Options: 'none', 'maxabs', 'robust_scale' 
@@ -128,7 +129,9 @@ for x in range(1, number_of_loops+1):
 
 	# Fit the model and save the history
 	#history = model.train_on_batch(X_train, Y_train, nb_epoch=number_of_epochs, batch_size=set_batch_size)
-	(loss, TOB_accuracy) = model.train_on_batch(X_train, Y_train)
+	#(loss, TOB_accuracy) = model.train_on_batch(X_train, Y_train)
+	print "Fitting and making history"
+	history = model.fit(X_train, Y_train, nb_epoch=number_of_epochs, batch_size=set_batch_size)
 
 	## List all data in history
 	#print(history.history.keys())
@@ -142,9 +145,10 @@ for x in range(1, number_of_loops+1):
 
 
 	## Evaluate the model
-	#scores = model.evaluate(X_train, Y_train)
-	#print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
-	#print "\n"
+	print "Evaluating and scoring"
+	scores = model.evaluate(X_train, Y_train)
+	print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+	print "\n"
 
 	# Save the model
 	model.save('./saved_models/saved_1D_model_not1000_truemass_%02d.h5' % x)
@@ -163,10 +167,12 @@ for x in range(1, number_of_loops+1):
 
 
         # Plot predictions
+	print "Plotting predictions"
         plot_predictions_1D(feature, X_test_prescale, model_class_predictions, x, show_toggle=False, save_toggle=True)
 
 
         # Plot ROC curve
+	print "Plotting ROC"
         plot_ROC(Y_test, model_predictions, x, show_toggle=False, save_toggle=True)	
 
 	# Print classification report
@@ -176,7 +182,7 @@ for x in range(1, number_of_loops+1):
 	print(classification_report(Y_test, model_class_predictions))
 	sys.stdout = oldStdout
 	
-	print "Accuracy = %d" % TOB_accuracy
+	#print "Accuracy = %d" % TOB_accuracy
 
 
 	# Reset Model
