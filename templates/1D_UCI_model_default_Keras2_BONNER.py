@@ -56,8 +56,8 @@ overall_start_time = time.time()
 file = open('./logs/logFile_training.txt', 'w')
 
 # Define Constants
-#data_directory = '/home/rice/jrorie/data/'
-data_directory = '/storage1/users/jtr6/UCI_paper_data_sample/'
+data_directory = '/home/rice/jrorie/data/'
+#data_directory = '/storage1/users/jtr6/UCI_paper_data_sample/'
 training_data_sample = 'not1000_train.npy'
 test_data_sample = 'not1000_test.npy'
 scaler = 'maxabs'							#Options: 'none', 'maxabs', 'robust_scale' 

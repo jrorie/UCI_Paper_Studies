@@ -50,10 +50,10 @@ def scale_x(X_train_prescale, X_test_prescale, scaler):
 
 def create_model():
         input_model = Sequential()
-        input_model.add(Dense(100, input_dim=globals.input_scale, init='uniform', activation='relu')) #Input layer
-        input_model.add(Dense(100, init='uniform', activation='relu'))		  		      #Hidden Layer 02
-        input_model.add(Dense(100, init='uniform', activation='relu'))               		      #Hidden Layer 03
-        input_model.add(Dense(1, init='uniform', activation='sigmoid'))              		      #Output Layer
+        input_model.add(Dense(100, input_dim=globals.input_scale, kernel_initializer='uniform', activation='relu')) #Input layer
+        input_model.add(Dense(100, kernel_initializer='uniform', activation='relu'))		  		      #Hidden Layer 02
+        input_model.add(Dense(100, kernel_initializer='uniform', activation='relu'))               		      #Hidden Layer 03
+        input_model.add(Dense(1, kernel_initializer='uniform', activation='sigmoid'))              		      #Output Layer
         # Compile model
         input_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         return input_model
