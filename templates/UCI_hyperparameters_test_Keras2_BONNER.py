@@ -112,8 +112,8 @@ model = KerasClassifier(build_fn=create_model, nb_epoch=1, batch_size=10000, ver
 
 
 # define the grid search parameters
-batch_size = [1, 100, 10000, 1000000]
-nb_epoch = [1,5]
+batch_size = [1000]
+nb_epoch = [1]
 param_grid = dict(batch_size=batch_size, nb_epoch=nb_epoch)
 grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1)
 grid_result = grid.fit(X_train, Y_train)
