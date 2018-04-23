@@ -103,7 +103,7 @@ def data(data_directory, training_data_sample, test_data_sample, scaler):
     won't reload data for each evaluation run.
     """
     # Load UCI data
-    dataset = numpy.load('data_directory + training_data_sample')                     #Load data from numpy array
+    dataset = numpy.load(data_directory + training_data_sample)                     #Load data from numpy array
     testset = numpy.load(data_directory + test_data_sample)                          #Load data from numpy array
 
 
