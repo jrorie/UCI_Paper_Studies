@@ -35,6 +35,65 @@ from sklearn.model_selection import GridSearchCV
 from hyperas import optim
 from hyperas.distributions import choice, uniform, conditional
 
+# Bring in and set global variables must be done before macros!
+import globals
+globals.init()
+
+# Bring in external macros
+import macros_benchmarks
+from macros_benchmarks import *
+
+
+
+# Create directory structure
+if not os.path.exists('./plots/'):
+    os.makedirs('./plots/')
+if not os.path.exists('./saved_models/'):
+    os.makedirs('./saved_models/')
+if not os.path.exists('./logs/'):
+    os.makedirs('./logs/')
+if not os.path.exists('./predictions/'):
+    os.makedirs('./predictions/')
+if not os.path.exists('./roc_info/'):
+    os.makedirs('./roc_info/')
+
+
+#Set the start time for the entire process
+overall_start_time = time.time()
+
+#Open the log file
+file = open('./logs/logFile_gridsearch.txt', 'w')
+
+# Define Constants
+data_directory = '/home/rice/jrorie/data/'
+training_data_sample = 'not1000_train.npy'
+test_data_sample = 'not1000_test.npy'
+scaler = 'maxabs'
+feature = 27
+number_of_loops = 1                            #Total number of loops, is incremented later for functions who's index start at 0
+number_of_epochs = 1                            #Just what it says, number of epochs never re-indexed
+set_batch_size = 10000                            #Select batch size
+
+# Fix random seed for reproducibility
+seed = 42
+numpy.random.seed(seed)
+
+# Log Constants
+file.write('--------------------------------\n')
+file.write('    Definitions of Constants    \n')
+file.write('--------------------------------\n')
+file.write('Directory: %s\n'        % data_directory)
+file.write('Training data: %s\n'    % training_data_sample)
+file.write('Test data: %s\n'        % test_data_sample)
+file.write('Seed value: %d\n'       % seed)
+file.write('Feature number: %d\n'   % feature)
+file.write('Number of loops: %d\n'  % number_of_loops)
+file.write('Number of epochs: %d\n' % number_of_epochs)
+file.write('Batch Size: %d\n'       % set_batch_size)
+file.write('********************************\n')
+file.write('********************************\n')
+
+
 
 def data():
     """
@@ -43,20 +102,22 @@ def data():
     This function is separated from create_model() so that hyperopt
     won't reload data for each evaluation run.
     """
-    (x_train, y_train), (x_test, y_test) = mnist.load_data()
-    x_train = x_train.reshape(60000, 784)
-    x_test = x_test.reshape(10000, 784)
-    x_train = x_train.astype('float32')
-    x_test = x_test.astype('float32')
-    x_train /= 255
-    x_test /= 255
-    nb_classes = 10
-    y_train = np_utils.to_categorical(y_train, nb_classes)
-    y_test = np_utils.to_categorical(y_test, nb_classes)
-    return x_train, y_train, x_test, y_test
+    # Load UCI data
+    dataset = numpy.load(data_directory + training_data_sample)                     #Load data from numpy array
+    testset = numpy.load(data_directory + test_data_sample)                          #Load data from numpy array
 
 
-def create_model(x_train, y_train, x_test, y_test):
+    # Split into input (X) and output (Y) variables
+    x_train_prescale = dataset[:,1:]
+    y_train = dataset[:,0]
+    x_test_prescale = testset[:,1:]
+    y_test = testset[:,0]
+    x_train, x_test = scale_x(x_train_prescale, x_test_prescale, scaler)
+    globals.input_scale = x_train.shape[1]
+    return x_train, y_train, x_test, y_test, input_scale
+
+
+def create_model(x_train, y_train, x_test, y_test, input_scale):
     """
     Model providing function:
 
@@ -68,7 +129,7 @@ def create_model(x_train, y_train, x_test, y_test):
         - model: specify the model just created so that we can later use it again.
     """
     model = Sequential()
-    model.add(Dense(512, input_shape=(784,)))
+    model.add(Dense(512, input_shape=(input_scale,)))
     model.add(Activation('relu'))
     model.add(Dropout({{uniform(0, 1)}}))
     model.add(Dense({{choice([256, 512, 1024])}}))
