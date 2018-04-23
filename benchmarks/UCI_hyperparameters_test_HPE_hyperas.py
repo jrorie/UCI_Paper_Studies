@@ -104,7 +104,7 @@ def data(data_directory, training_data_sample, test_data_sample, scaler):
     """
     # Load UCI data
     dataset = numpy.load('/home/rice/jrorie/data/not1000_train.npy')                     #Load data from numpy array
-    testset = numpy.load(/home/rice/jrorie/data/not1000_test.npy')                          #Load data from numpy array
+    testset = numpy.load('/home/rice/jrorie/data/not1000_test.npy')                          #Load data from numpy array
 
 
     # Split into input (X) and output (Y) variables
@@ -112,12 +112,12 @@ def data(data_directory, training_data_sample, test_data_sample, scaler):
     y_train = dataset[:,0]
     x_test_prescale = testset[:,1:]
     y_test = testset[:,0]
-    x_train, x_test = scale_x(x_train_prescale, x_test_prescale, maxabs)
-    globals.input_scale = x_train.shape[1]
-    return x_train, y_train, x_test, y_test, input_scale
+    x_train, x_test = scale_x(x_train_prescale, x_test_prescale, 'maxabs')
+    #globals.input_scale = x_train.shape[1]
+    return x_train, y_train, x_test, y_test
 
 
-def create_model(x_train, y_train, x_test, y_test, input_scale):
+def create_model(x_train, y_train, x_test, y_test):
     """
     Model providing function:
 
@@ -129,7 +129,7 @@ def create_model(x_train, y_train, x_test, y_test, input_scale):
         - model: specify the model just created so that we can later use it again.
     """
     model = Sequential()
-    model.add(Dense(512, input_shape=(input_scale,)))
+    model.add(Dense(512, input_shape=(28,)))
     model.add(Activation('relu'))
     model.add(Dropout({{uniform(0, 1)}}))
     model.add(Dense({{choice([256, 512, 1024])}}))
