@@ -103,8 +103,8 @@ def data(data_directory, training_data_sample, test_data_sample, scaler):
     won't reload data for each evaluation run.
     """
     # Load UCI data
-    dataset = numpy.load(data_directory + training_data_sample)                     #Load data from numpy array
-    testset = numpy.load(data_directory + test_data_sample)                          #Load data from numpy array
+    dataset = numpy.load('/home/rice/jrorie/data/not1000_train.npy')                     #Load data from numpy array
+    testset = numpy.load(/home/rice/jrorie/data/not1000_test.npy')                          #Load data from numpy array
 
 
     # Split into input (X) and output (Y) variables
@@ -112,7 +112,7 @@ def data(data_directory, training_data_sample, test_data_sample, scaler):
     y_train = dataset[:,0]
     x_test_prescale = testset[:,1:]
     y_test = testset[:,0]
-    x_train, x_test = scale_x(x_train_prescale, x_test_prescale, scaler)
+    x_train, x_test = scale_x(x_train_prescale, x_test_prescale, maxabs)
     globals.input_scale = x_train.shape[1]
     return x_train, y_train, x_test, y_test, input_scale
 
