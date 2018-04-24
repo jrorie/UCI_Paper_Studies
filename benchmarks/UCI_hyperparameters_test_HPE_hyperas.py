@@ -95,7 +95,7 @@ file.write('********************************\n')
 
 
 
-def data(data_directory, training_data_sample, test_data_sample, scaler):
+def data():
     """
     Data providing function:
 
@@ -145,10 +145,10 @@ def create_model(x_train, y_train, x_test, y_test):
         model.add({{choice([Dropout(0.5), Activation('linear')])}})
         model.add(Activation('relu'))
 
-    model.add(Dense(10))
-    model.add(Activation('softmax'))
+    model.add(Dense(1))
+    model.add(Activation('sigmoid'))
 
-    model.compile(loss='categorical_crossentropy', metrics=['accuracy'],
+    model.compile(loss='binary_crossentropy', metrics=['accuracy'],
                   optimizer={{choice(['rmsprop', 'adam', 'sgd'])}})
 
     model.fit(x_train, y_train,
